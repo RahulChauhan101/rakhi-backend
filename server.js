@@ -11,9 +11,18 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      "https://rakhi-frontend-orpin.vercel.app",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+
 app.use("/api/auth", authRoutes);
+
 const productRoutes = require("./routes/productRoutes");
 
 app.use("/api/products", productRoutes);
@@ -21,7 +30,6 @@ app.use("/api/products", productRoutes);
 app.get("/", (req, res) => {
   res.send("Backend Running");
 });
-
 
 const PORT = process.env.PORT || 5000;
 
