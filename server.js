@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 dotenv.config();
 
@@ -13,9 +14,11 @@ const app = express();
 
 app.use(
   cors({
-    origin:
-    "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
       "https://rakhi-frontend-orpin.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
@@ -23,9 +26,6 @@ app.use(
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-
-const productRoutes = require("./routes/productRoutes");
-
 app.use("/api/products", productRoutes);
 
 app.get("/", (req, res) => {
