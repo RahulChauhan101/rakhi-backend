@@ -23,6 +23,8 @@ const getProducts = async (req, res) => {
 const addProduct = async (req, res) => {
 
   try {
+        console.log(req.body);
+
 
     const {
       name,
@@ -32,7 +34,9 @@ const addProduct = async (req, res) => {
       stock,
       rating,
       reviews,
-      category
+      category,
+      productType
+
     } = req.body;
 
     const product = await Product.create({
@@ -43,7 +47,8 @@ const addProduct = async (req, res) => {
       stock,
       rating,
       reviews,
-      category
+      category,
+      productType
     });
 
     res.status(201).json({
