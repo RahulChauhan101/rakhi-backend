@@ -63,6 +63,7 @@ router.post("/register", async (req, res) => {
 
 
 // LOGIN
+// LOGIN
 router.post("/login", async (req, res) => {
 
   try {
@@ -92,15 +93,24 @@ router.post("/login", async (req, res) => {
 
     }
 
+    // ACTIVE TRUE
+    user.isActive = true;
+
+    await user.save();
+
     const token = jwt.sign(
+
       {
         id: user._id,
         role: user.role
       },
+
       process.env.JWT_SECRET,
+
       {
         expiresIn: "7d"
       }
+
     );
 
     res.json({
@@ -109,7 +119,19 @@ router.post("/login", async (req, res) => {
 
       token,
 
-      role: user.role
+      user: {
+
+        _id: user._id,
+
+        name: user.name,
+
+        email: user.email,
+
+        role: user.role,
+
+        isActive: user.isActive
+
+      }
 
     });
 
@@ -117,6 +139,32 @@ router.post("/login", async (req, res) => {
 
     res.status(500).json({
       message: error.message
+    });
+
+  }
+
+});
+// GET ALL ADMINS
+
+// GET ALL ADMINS
+router.get("/admins", async (req, res) => {
+
+  try {
+
+    const admins = await User.find({
+
+      role: "admin"
+
+    }).select("-password");
+
+    res.json(admins);
+
+  } catch (error) {
+
+    res.status(500).json({
+
+      message: error.message
+
     });
 
   }
