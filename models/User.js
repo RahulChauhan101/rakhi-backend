@@ -18,18 +18,26 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
-  role: {
-    type: String,
-    enum: ["admin", "user"],
-    default: "user"
-  },
-  isActive: {
+    phone: {
+      type: String,
+      default: ""
+    },
 
-  type: Boolean,
+    profileImage: {
+      type: String,
+      default: ""
+    },
 
-  default: false
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user"
+    },
 
-}
+    isActive: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true

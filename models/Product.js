@@ -1,24 +1,161 @@
 const mongoose = require("mongoose");
 
-const productSchema =
-  new mongoose.Schema({
+const productSchema = new mongoose.Schema(
 
-    name: String,
+  {
 
-    price: Number,
+    // PRODUCT NAME
+    name: {
+      type: String,
+      required: true
+    },
 
-    image: String,
+    // URL SLUG
+    slug: {
+      type: String,
+      unique: true
+    },
 
-    description: String,
+    // DESCRIPTION
+    description: {
+      type: String,
+      required: true
+    },
 
-    stock: Number,
+    // MAIN PRICE
+    price: {
+      type: Number,
+      required: true
+    },
 
-    rating: Number,
+    discountPrice: {
+      type: Number,
+      default: 0
+    },
 
-    reviews: Number,
+    // BRAND
+    brand: {
+      type: String,
+      default: ""
+    },
 
-    category: String,
+    // CATEGORY
+    category: {
+      type: String,
+      required: true
+    },
 
+    // SUB CATEGORY
+    subCategory: {
+      type: String,
+      default: ""
+    },
+
+    // TOTAL STOCK
+    stock: {
+      type: Number,
+      default: 0
+    },
+
+    // RATINGS
+    rating: {
+      type: Number,
+      default: 0
+    },
+
+    reviews: {
+      type: Number,
+      default: 0
+    },
+
+    // MAIN IMAGES
+    images: [
+      {
+        type: String
+      }
+    ],
+
+    // VIDEO
+    video: {
+      type: String,
+      default: ""
+    },
+
+    // COLORS
+    colors: [
+      {
+        type: String
+      }
+    ],
+
+    // SIZES
+    sizes: [
+      {
+        type: String
+      }
+    ],
+
+    // PRODUCT VARIANTS
+    variants: [
+
+      {
+
+        color: {
+          type: String
+        },
+
+        size: {
+          type: String
+        },
+
+        stock: {
+          type: Number,
+          default: 0
+        },
+
+        price: {
+          type: Number
+        },
+
+        discountPrice: {
+          type: Number,
+          default: 0
+        },
+
+        images: [
+          {
+            type: String
+          }
+        ]
+
+      }
+
+    ],
+
+    // TAGS
+    tags: [
+      {
+        type: String
+      }
+    ],
+
+    // PRODUCT FLAGS
+    isFeatured: {
+      type: Boolean,
+      default: false
+    },
+
+    isBestSeller: {
+      type: Boolean,
+      default: false
+    },
+
+    isTrending: {
+      type: Boolean,
+      default: false
+    },
+
+    // PRODUCT TYPE
     productType: {
 
       type: String,
@@ -31,15 +168,26 @@ const productSchema =
 
       default: "new"
 
+    },
+
+    // ADMIN WHO ADDED PRODUCT
+    createdBy: {
+
+      type: mongoose.Schema.Types.ObjectId,
+
+      ref: "User"
+
     }
 
   },
+
   {
     timestamps: true
-  });
+  }
 
-module.exports =
-  mongoose.model(
-    "Product",
-    productSchema
-  );
+);
+
+module.exports = mongoose.model(
+  "Product",
+  productSchema
+);

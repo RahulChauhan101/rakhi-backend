@@ -9,12 +9,30 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 
-// REGISTER
+// ================= REGISTER =================
 router.post("/register", async (req, res) => {
 
   try {
 
-    const { name, email, password } = req.body;
+    const {
+      name,
+      email,
+      password,
+      phone
+    } = req.body;
+
+    // VALIDATION
+    if (!name || !email || !password) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: "All fields are required"
+
+      });
+
+    }
 
     // CHECK USER
     const userExists = await User.findOne({ email });
@@ -22,15 +40,17 @@ router.post("/register", async (req, res) => {
     if (userExists) {
 
       return res.status(400).json({
+
+        success: false,
+
         message: "User already exists"
+
       });
 
     }
 
     // HASH PASSWORD
-    const salt = await bcrypt.genSalt(10);
-
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // CREATE USER
     const user = await User.create({
@@ -38,23 +58,33 @@ router.post("/register", async (req, res) => {
       name,
       email,
       password: hashedPassword,
-
+      phone,
       role: "user"
 
     });
 
+    // REMOVE PASSWORD
+    const userData = await User.findById(user._id)
+    .select("-password");
+
     res.status(201).json({
+
+      success: true,
 
       message: "User Registered Successfully",
 
-      user
+      user: userData
 
     });
 
   } catch (error) {
 
     res.status(500).json({
+
+      success: false,
+
       message: error.message
+
     });
 
   }
@@ -62,42 +92,54 @@ router.post("/register", async (req, res) => {
 });
 
 
-// LOGIN
-// LOGIN
+// ================= LOGIN =================
 router.post("/login", async (req, res) => {
 
   try {
 
     const { email, password } = req.body;
 
+    // CHECK EMAIL
     const user = await User.findOne({ email });
 
     if (!user) {
 
       return res.status(400).json({
+
+        success: false,
+
         message: "User not found"
+
       });
 
     }
 
+    // CHECK PASSWORD
     const isMatch = await bcrypt.compare(
+
       password,
       user.password
+
     );
 
     if (!isMatch) {
 
       return res.status(400).json({
+
+        success: false,
+
         message: "Invalid password"
+
       });
 
     }
 
-    // ACTIVE TRUE
+    // UPDATE ACTIVE STATUS
     user.isActive = true;
 
     await user.save();
 
+    // GENERATE TOKEN
     const token = jwt.sign(
 
       {
@@ -113,7 +155,9 @@ router.post("/login", async (req, res) => {
 
     );
 
-    res.json({
+    res.status(200).json({
+
+      success: true,
 
       message: "Login Successful",
 
@@ -127,6 +171,8 @@ router.post("/login", async (req, res) => {
 
         email: user.email,
 
+        phone: user.phone,
+
         role: user.role,
 
         isActive: user.isActive
@@ -138,15 +184,19 @@ router.post("/login", async (req, res) => {
   } catch (error) {
 
     res.status(500).json({
+
+      success: false,
+
       message: error.message
+
     });
 
   }
 
 });
-// GET ALL ADMINS
 
-// GET ALL ADMINS
+
+// ================= GET ADMINS =================
 router.get("/admins", async (req, res) => {
 
   try {
@@ -157,11 +207,19 @@ router.get("/admins", async (req, res) => {
 
     }).select("-password");
 
-    res.json(admins);
+    res.status(200).json({
+
+      success: true,
+
+      admins
+
+    });
 
   } catch (error) {
 
     res.status(500).json({
+
+      success: false,
 
       message: error.message
 
@@ -170,5 +228,6 @@ router.get("/admins", async (req, res) => {
   }
 
 });
+
 
 module.exports = router;
